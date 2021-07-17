@@ -1,9 +1,12 @@
 package de.blu.profilemanager.listener;
 
 import de.blu.profilemanager.config.MainConfig;
+import de.blu.profilemanager.event.ProfileLoginEvent;
+import de.blu.profilemanager.event.ProfileLogoutEvent;
 import de.blu.profilesystem.data.Profile;
 import de.blu.profilesystem.exception.ServiceUnreachableException;
 import de.blu.profilesystem.util.ProfileWebRequester;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -14,7 +17,6 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 @Singleton
 public final class ProfileLoginListener implements Listener {
@@ -77,6 +79,9 @@ public final class ProfileLoginListener implements Listener {
             }
 
             this.profileWebRequester.login(this.mainConfig.getServiceUrl(), playerId, profile);
+            Bukkit.getServer()
+                .getPluginManager()
+                .callEvent(new ProfileLoginEvent(e.getPlayer(), profile));
           } catch (ServiceUnreachableException serviceUnreachableException) {
             serviceUnreachableException.printStackTrace();
           }
@@ -105,6 +110,9 @@ public final class ProfileLoginListener implements Listener {
                 this.profileWebRequester.getCurrentProfile(
                     this.mainConfig.getServiceUrl(), playerId);
             this.profileWebRequester.logout(this.mainConfig.getServiceUrl(), profile);
+            Bukkit.getServer()
+                .getPluginManager()
+                .callEvent(new ProfileLogoutEvent(e.getPlayer(), profile));
           } catch (ServiceUnreachableException serviceUnreachableException) {
             serviceUnreachableException.printStackTrace();
           }

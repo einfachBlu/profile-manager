@@ -7,6 +7,8 @@ import de.blu.itemstackbuilder.builder.ItemStackBuilder;
 import de.blu.localize.LocalizeAPI;
 import de.blu.localize.data.Locale;
 import de.blu.profilemanager.config.MainConfig;
+import de.blu.profilemanager.event.ProfileLoginEvent;
+import de.blu.profilemanager.event.ProfileLogoutEvent;
 import de.blu.profilemanager.menu.select.SelectMaterialMenu;
 import de.blu.profilemanager.util.InventoryHelper;
 import de.blu.profilemanager.util.SchedulerHelper;
@@ -15,6 +17,7 @@ import de.blu.profilesystem.data.Profile;
 import de.blu.profilesystem.exception.ServiceUnreachableException;
 import de.blu.profilesystem.util.ProfileWebRequester;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -86,10 +89,16 @@ public final class ProfileEditMenu extends Menu {
                     this.mainConfig.getServiceUrl(), this.player.getUniqueId());
             if (currentProfile != null) {
               this.profileWebRequester.logout(this.mainConfig.getServiceUrl(), currentProfile);
+              Bukkit.getServer()
+                  .getPluginManager()
+                  .callEvent(new ProfileLogoutEvent(this.player, currentProfile));
             }
 
             this.profileWebRequester.login(
                 this.mainConfig.getServiceUrl(), this.player.getUniqueId(), this.profile);
+            Bukkit.getServer()
+                .getPluginManager()
+                .callEvent(new ProfileLoginEvent(this.player, this.profile));
             this.getPlayer().closeInventory();
             this.getPlayer().chat("/profiles");
           } catch (ServiceUnreachableException serviceUnreachableException) {
