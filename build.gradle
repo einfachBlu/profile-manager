@@ -46,7 +46,7 @@ subprojects {
         implementation 'com.google.inject:guice:4.0'
         compileOnly 'com.github.einfachBlu:ItemStackBuilder:v1.0.1'
         compileOnly 'com.github.einfachBlu:localize:master-SNAPSHOT'
-        implementation 'com.github.einfachBlu:profile-system:f105f6c2e4a0d8885eb91d4f1b7293c6e5be82ae'
+        implementation 'com.github.einfachBlu:profile-system:94e9504e31840dea208c62eb84529a78005e4285'
         compileOnly 'com.github.einfachBlu:database-system:f873b4ccb8bdb09cb433273861f9639575801f79'
 
         compileOnly 'org.projectlombok:lombok:1.18.8'
