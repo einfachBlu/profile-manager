@@ -89,12 +89,21 @@ public final class ProfileManager extends JavaPlugin {
             return;
           }
 
+          String kickMessage = "";
+          switch (channel) {
+            case "ProfileKickPlayerProfileDisabled":
+              kickMessage = this.localizeAPI.getMessage(playerId, "profile-disabled-kick-message");
+              break;
+            case "ProfileKickPlayerProfileOtherLogin":
+              kickMessage = this.localizeAPI.getMessage(playerId, "profile-other-kick-message");
+              break;
+          }
+
+          String finalKickMessage = kickMessage;
           SchedulerHelper.runSync(
               () ->
-                  player.kick(
-                      Component.text(
-                          this.localizeAPI.getMessage(playerId, "profile-disabled-kick-message"))));
+                  player.kick(Component.text(finalKickMessage)));
         },
-        "ProfileKickPlayerProfileDisabled");
+        "ProfileKickPlayerProfileDisabled", "ProfileKickPlayerProfileOtherLogin");
   }
 }

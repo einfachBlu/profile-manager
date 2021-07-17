@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,6 +26,7 @@ public final class ProfileLoginListener implements Listener {
   @Inject private ProfileWebRequester profileWebRequester;
   @Inject private MainConfig mainConfig;
   @Inject private ExecutorService executorService;
+  @Inject private JavaPlugin javaPlugin;
 
   @EventHandler
   public void onLogin(PlayerLoginEvent e) {
@@ -79,9 +82,15 @@ public final class ProfileLoginListener implements Listener {
             }
 
             this.profileWebRequester.login(this.mainConfig.getServiceUrl(), playerId, profile);
-            Bukkit.getServer()
-                .getPluginManager()
-                .callEvent(new ProfileLoginEvent(e.getPlayer(), profile));
+            Profile finalProfile = profile;
+            new BukkitRunnable() {
+              @Override
+              public void run() {
+                Bukkit.getServer()
+                        .getPluginManager()
+                        .callEvent(new ProfileLoginEvent(e.getPlayer(), finalProfile));
+              }
+            }.runTask(this.javaPlugin);
           } catch (ServiceUnreachableException serviceUnreachableException) {
             serviceUnreachableException.printStackTrace();
           }

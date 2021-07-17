@@ -87,11 +87,31 @@ public final class ProfileEditMenu extends Menu {
             Profile currentProfile =
                 this.profileWebRequester.getCurrentProfile(
                     this.mainConfig.getServiceUrl(), this.player.getUniqueId());
+
+            // Ignore if already logged in to this profile
+            if (currentProfile != null && currentProfile.getId().equals(this.profile.getId())) {
+              return;
+            }
+
+            // Prevent if someone else is logged in
+            if (this.profile.getLoggedInPlayerId() != null
+                && !this.player.hasPermission("profilemanager.admin")) {
+              return;
+            }
+
             if (currentProfile != null) {
               this.profileWebRequester.logout(this.mainConfig.getServiceUrl(), currentProfile);
               Bukkit.getServer()
                   .getPluginManager()
                   .callEvent(new ProfileLogoutEvent(this.player, currentProfile));
+            }
+
+            // Kick out player if admin is logging in
+            if (this.profile.getLoggedInPlayerId() != null
+                && this.player.hasPermission("profilemanager.admin")) {
+              this.redisConnection.publish(
+                  "ProfileKickPlayerProfileOtherLogin",
+                  this.profile.getLoggedInPlayerId().toString());
             }
 
             this.profileWebRequester.login(
