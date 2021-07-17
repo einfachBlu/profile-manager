@@ -1,0 +1,12 @@
+name: ProfileManager
+main: de.blu.profilemanager.ProfileManager
+api-version: 1.16
+version: 1.0.0
+author: Blu
+depend:
+  - ItemStackBuilder
+  - Localize
+  - ProtocolLib
+  - DatabaseSystem
+commands:
+  profiles:

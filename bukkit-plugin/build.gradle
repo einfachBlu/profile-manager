@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+group 'de.blu'
+version '1.0.0-SNAPSHOT'
+
+repositories {
+    // Paper 1.16
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+
+    // ProtocolLib
+    maven { url = 'https://repo.dmulloy2.net/repository/public' }
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.6.0'
+}
+
+shadowJar.doLast {
+    File jarFile = file("${project.buildDir}/libs/${project.name}-${project.version}-all.jar")
+
+    if (!jarFile.exists()) {
+        jarFile = file("${project.buildDir}/libs/${project.name}-${project.version}.jar")
+        if (!jarFile.exists()) {
+            //println "output jarFile doesnt exist, maybe something failed with the build?"
+            return
+        }
+    }
+
+    copy {
+        from jarFile
+        into "${project.rootDir}/output/"
+
+        rename {
+            "profile-manager-${project.name}.jar"
+        }
+    }
+
+    copy {
+        from jarFile
+        into "${project.rootDir}/output/"
+
+        rename {
+            "G:\\Programming\\MC_TestServer\\tuinity_1_16\\plugins\\profile-manager-${project.name}.jar"
+        }
+    }
+}
